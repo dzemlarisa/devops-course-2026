@@ -127,4 +127,28 @@ sudo systemctl status ssh --no-pager
 | 02-keys-configured | после настройки SSH-ключей (11.10.2026 18:29) |
 | 03-ssh-hardened | после изменения порта, PermitRootLogin, MaxAuthTries 11.10.2026 18:54|  
 
-```
+## 8. Веб-сервер
+
+- **Устанавливаемый пакет**: `nginx` (версия 1.28.3)
+- **Служба**: `nginx.service` (главный процесс от `root`, рабочие от `www-data`)
+- **Путь к конфигурации ресурса**: `/etc/nginx/sites-available/devops-site`
+- **Символическая ссылка**: `/etc/nginx/sites-enabled/devops-site`
+- **Каталог ресурса**: `/var/www/devops-site`, владелец `devops:devops`, права `755` для каталога и `644` для файлов.
+
+### Сертификаты TLS
+
+- **Путь к сертификату**: `/etc/ssl/certs/devops.crt` (права `644`, владелец `root`)
+- **Путь к приватному ключу**: `/etc/ssl/private/devops.key` (права `600`, владелец `root`)
+- **Команда формирования сертификата**: 
+  `sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/devops.key -out /etc/ssl/certs/devops.crt -subj "/CN=devops.local" -addext "subjectAltName=DNS:devops.local"`
+- **Срок действия**: 365 дней.
+
+## 9. Контейнеризация
+
+- **Способ установки Docker Engine**: Официальный репозиторий Docker (пакет `docker-ce`). Версия: 29.9.2.
+- **Участники группы docker**: пользователь `devops`.
+- **Расположение проекта на сервере**: `~/app`
+- **Расположение файла `.env`**: `~/app/.env`, права доступа `600`.
+- **Публикуемые порты и адреса**: приложение опубликовано только на `127.0.0.1:5000`. Порт СУБД (5432) не публикуется.
+- **Именованные тома**: `app_db_data` (для хранения данных PostgreSQL).
+- **Конфигурация обратного прокси-сервера**: Nginx проксирует запросы по пути `/app/` на `http://127.0.0.1:5000/`.
