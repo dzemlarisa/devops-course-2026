@@ -1,0 +1,6 @@
+---
+app_image: "ghcr.io/dzemlarisa/devops-ci-app"
+app_tag: "981ee817d475cf503674b23f77dad1224f99360f"
+app_container_name: "devops-ci-app"
+app_host_port: 5000
+app_internal_port: 5000
